@@ -1,27 +1,46 @@
 class Solution {
 public:
-    int travers(int i,int j,vector <vector <bool>> &vis,int n,int m,int cur,vector<vector<int>>& grid){
-        if(i<0 || j<0 || i==n || j==m || grid[i][j]==0 || vis[i][j]){
-            return 0;
-        }
-        vis[i][j]=true;
-        int a=max(travers(i+1,j,vis,n,m,grid[i][j],grid),travers(i-1,j,vis,n,m,grid[i][j],grid));
-        int b=max(travers(i,j+1,vis,n,m,grid[i][j],grid),travers(i,j-1,vis,n,m,grid[i][j],grid));
-        vis[i][j]=false;
-        return max(a,b)+grid[i][j];
-    }
     int getMaximumGold(vector<vector<int>>& grid) {
-        int n=grid.size();
-        int m=grid[0].size();
-        int ans=0;
-        vector <vector <bool>> vis(n,vector <bool> (m,false));
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                if(grid[i][j]!=0){
-                    ans=max(ans,travers(i,j,vis,n,m,0,grid));
-                }
+        int rows = grid.size();
+        int cols = grid[0].size();
+        int maxGold = 0;
+
+        // Search for the path with the maximum gold starting from each cell
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                maxGold =
+                    max(maxGold, dfsBacktrack(grid, rows, cols, row, col));
             }
         }
-        return ans;
+        return maxGold;
+    }
+
+private:
+    const vector<int> DIRECTIONS = {0, 1, 0, -1, 0};
+
+    int dfsBacktrack(vector<vector<int>>& grid, int rows, int cols, int row,
+                     int col) {
+        // Base case: this cell is not in the matrix or this cell has no gold
+        if (row < 0 || col < 0 || row == rows || col == cols ||
+            grid[row][col] == 0) {
+            return 0;
+        }
+        int maxGold = 0;
+
+        // Mark the cell as visited and save the value
+        int originalVal = grid[row][col];
+        grid[row][col] = 0;
+
+        // Backtrack in each of the four directions
+        for (int direction = 0; direction < 4; direction++) {
+            maxGold =
+                max(maxGold,
+                    dfsBacktrack(grid, rows, cols, DIRECTIONS[direction] + row,
+                                 DIRECTIONS[direction + 1] + col));
+        }
+
+        // Set the cell back to its original value
+        grid[row][col] = originalVal;
+        return maxGold + originalVal;
     }
 };
