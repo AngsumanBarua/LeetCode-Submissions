@@ -1,37 +1,45 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 class Solution {
 public:
     ListNode* modifiedList(vector<int>& nums, ListNode* head) {
-        // Create an unordered_set for efficient lookup of values in nums
-        unordered_set<int> valuesToRemove(nums.begin(), nums.end());
-
-        // Handle the case where the head node needs to be removed
-        while (head != nullptr && valuesToRemove.count(head->val) > 0) {
-            ListNode* temp = head;
-            head = head->next;
+        int n=nums.size();
+        unordered_map <int,bool> mp;
+        for(int i=0;i<n;i++){
+            mp[nums[i]]=true;
+        }
+        while(head){
+            ListNode* temp=head;
+            if(mp.find(temp->val)==mp.end()){
+                //cout << temp->val << endl;
+                break;
+            }
+            head=head->next;
             delete temp;
         }
-
-        // If the list is empty after removing head nodes, return nullptr
-        if (head == nullptr) {
-            return nullptr;
-        }
-
-        // Iterate through the list, removing nodes with values in the set
-        ListNode* current = head;
-        while (current->next != nullptr) {
-            if (valuesToRemove.contains(current->next->val)) {
-                // Store the node to be deleted
-                ListNode* temp = current->next;
-                // Skip the next node by updating the pointer
-                current->next = current->next->next;
-                // Delete the removed node
+        //cout << head->val << endl;
+        ListNode* cur=head->next;
+        ListNode* prev=head;
+        while(cur!=NULL){
+            ListNode* temp=cur;
+            cur=cur->next;
+            if(mp.find(temp->val)!=mp.end()){
                 delete temp;
-            } else {
-                // Move to the next node
-                current = current->next;
+            }
+            else{
+                prev->next=temp;
+                prev=prev->next;
             }
         }
-
+        prev->next=NULL;
         return head;
     }
 };
