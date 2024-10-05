@@ -1,25 +1,36 @@
 class Solution {
 public:
     bool canArrange(vector<int>& arr, int k) {
-        unordered_map<int, int> remainderCount;
-
-        // Store the count of remainders in a map.
-        for (auto i : arr) remainderCount[(i % k + k) % k]++;
-
-        for (auto i : arr) {
-            int rem = (i % k + k) % k;
-
-            // If the remainder for an element is 0, then the count
-            // of numbers that give this remainder must be even.
-            if (rem == 0) {
-                if (remainderCount[rem] % 2 == 1) return false;
+        int n=arr.size();
+        int mp[k+3];
+        memset(mp,0,sizeof(mp));
+        for(int i=0;i<n;i++){
+            if(arr[i]>=0){
+                mp[arr[i]%k]++;
             }
-
-            // If the remainder rem and k-rem do not have the
-            // same count then pairs can not be made.
-            else if (remainderCount[rem] != remainderCount[k - rem])
-                return false;
+            else{
+                int m=arr[i]/k;
+                if(m<0){
+                   m*=-1; 
+                }
+                if(arr[i]%k!=0){
+                    m++;
+                }
+                arr[i]+=(m*k);
+                //cout << arr[i] << endl;
+                mp[arr[i]]++;
+            }
         }
-        return true;
+        bool ans=true;
+        if(mp[0]&1){
+            ans=false;
+        }
+        for(int i=1;i<=(k/2) && ans;i++){
+            if(mp[i]!=mp[k-i]){
+                ans=false;
+                break;
+            }
+        }
+        return ans;
     }
 };
