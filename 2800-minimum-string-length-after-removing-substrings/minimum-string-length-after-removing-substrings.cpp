@@ -1,36 +1,26 @@
 class Solution {
 public:
     int minLength(string s) {
-        while(1){
-            string t;
-            int l=s.length();
-            bool fg=false;
-            int lst=-1;
-            for(int i=1;i<l;i++){
-                if(!fg && s[i]=='B' && s[i-1]=='A'){
-                    fg=true;
-                    lst=i;
-                }
-                else if(!fg && s[i]=='D' && s[i-1]=='C'){
-                    fg=true;
-                    lst=i;
-                }
-                else{
-                    if(lst!=i-1){
-                        t.push_back(s[i-1]);
-                    }
-                    if(i==l-1){
-                        t.push_back(s[i]);
-                    }
-                }
+        int l=s.length();
+        stack <char> st;
+        st.push(s[0]);
+        int n=1;
+        for(int i=1;i<l;i++){
+            if(st.empty()){
+                st.push(s[i]);
+                continue;
             }
-            if(!fg){
-                break;
+            char a=st.top();
+            st.pop();
+            //n--;
+            if((s[i]!='B' || a!='A') && (s[i]!='D' || a!='C')){
+                st.push(a);
+                st.push(s[i]);
+                //n+=2;
             }
-            else{
-                swap(s,t);
-            }
+            //cout << i << " " << n << endl;
         }
-        return s.length();
+        //cout << n << endl;
+        return st.size();
     }
 };
